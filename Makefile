@@ -1,4 +1,5 @@
 # minimalist makefile
+CC=gcc
 .SUFFIXES:
 #
 .SUFFIXES: .cpp .o .c .h
