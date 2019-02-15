@@ -40,7 +40,7 @@
 void benchmark_inplace_intersection() {
   bitset_t *b1 = bitset_create();
   bitset_t *b2 = bitset_create();
-  uint32_t size = 1000 * 64; // 64 words
+  uint32_t size = 1000000 * 64; // 64 words
 
   for (uint32_t k = 0; k < size; k += 3) {
     bitset_set(b1, k);
