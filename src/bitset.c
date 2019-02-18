@@ -354,6 +354,13 @@ size_t bitset_symmetric_difference_count(const bitset_t * restrict b1, const bit
     return answer;
 }
 
+void bitset_inplace_complement(bitset_t * restrict b) {
+    size_t k;
+    for (k = 0; k < b->arraysize; k ++) {
+        b->array[k] = ~b->array[k];
+    }    
+}
+
 bool bitset_trim(bitset_t * bitset) {
     size_t newsize = bitset->arraysize;
     while (newsize > 0) {

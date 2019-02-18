@@ -183,6 +183,16 @@ static inline bool bitset_get(const bitset_t *bitset, size_t i) {
     return (bitset->array[slot] & (((uint64_t) 1) << BIT_OFFSET(i))) != 0;
 }
 
+/* Toggle the value of the ith bit. */
+static inline bool bitset_toggle(const bitset_t *bitset, size_t i) {
+    size_t slot = BIT_SLOT(i);
+    if (slot >= bitset->arraysize) {
+        return false;
+    }
+    bitset->array[slot] ^= (((uint64_t) 1) << BIT_OFFSET(i));
+    return true;
+}
+
 /* Count number of bit sets.  */
 size_t bitset_count(const bitset_t *bitset);
 size_t bitset_count_s(const bitset_t *bitset);
@@ -218,6 +228,8 @@ bool bitset_inplace_symmetric_difference(bitset_t * restrict b1, const bitset_t 
 
 /* compute the size of the symmetric difference  */
 size_t bitset_symmetric_difference_count(const bitset_t *restrict b1, const bitset_t * restrict b2);
+
+void bitset_inplace_complement(bitset_t * restrict b);
 
 /* iterate over the set bits
  like so :

@@ -159,5 +159,20 @@ int main() {
     BEST_TIME_CHECK(iterate2b(b1), expected, repeat);
     BEST_TIME_CHECK(iterate3b(b1), expected, repeat);
 
+    BEST_TIME(bitset_inplace_complement(b1), 100);
+    assert(bitset_count(b1) == count);
+    assert(bitset_count_s(b1) == count);
+    
+    bitset_inplace_complement(b1);
+    assert(bitset_count_s(b1) == bitset_size_in_bits(b1) - count);
+    bitset_inplace_complement(b1);
+    
+    for (uint32_t k = 0; k < MAX_INDEX; k += DELTA) {
+        bitset_toggle(b1, k);
+    }
+    assert(bitset_count_s(b1) == 0);
+    assert(bitset_count(b1) == 0);
+    
+    
     bitset_free(b1);
 }
