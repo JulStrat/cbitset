@@ -198,28 +198,44 @@ bool bitset_inplace_union(bitset_t * restrict b1, const bitset_t * restrict b2) 
 }
 
 size_t bitset_minimum(const bitset_t *bitset) {
+    uint64_t w;
     for (size_t k = 0; k < bitset->arraysize; k++) {
-        uint64_t w = bitset->array[k];
+        w = bitset->array[k];
         if (w != 0) {
-#ifndef SOFT_CTZ            
             return __builtin_ctzll(w) + k * 64;
-#else
-            return ctz(w) + (k << 6);            
-#endif            
+        }
+    }
+    return 0;
+}
+
+size_t bitset_minimum_s(const bitset_t *bitset) {
+    uint64_t w;
+    for (size_t k = 0; k < bitset->arraysize; k++) {
+        w = bitset->array[k];
+        if (w != 0) {
+            return ctz(w) + (k << 6);
         }
     }
     return 0;
 }
 
 size_t bitset_maximum(const bitset_t *bitset) {
+    uint64_t w;
     for (size_t k = bitset->arraysize; k > 0; k--) {
-        uint64_t w = bitset->array[k - 1];
+        w = bitset->array[k - 1];
         if (w != 0) {
-#ifndef SOFT_CLZ            
             return 63 - __builtin_clzll(w) + (k - 1) * 64;
-#else
-            return 63 - clz(w) + ((k - 1) << 6);            
-#endif            
+        }
+    }
+    return 0;
+}
+
+size_t bitset_maximum_s(const bitset_t *bitset) {
+    uint64_t w;
+    for (size_t k = bitset->arraysize; k > 0; k--) {
+        w = bitset->array[k - 1];
+        if (w != 0) {
+            return 63 - clz(w) + ((k - 1) << 6);
         }
     }
     return 0;

@@ -22,7 +22,8 @@ static inline size_t bit_slot(uint64_t v) {
 }
 */ 
 
-#define BIT_OFFSET(p) ((size_t) ((p) % 64))
+//#define BIT_OFFSET(p) ((size_t) ((p) % 64))
+#define BIT_OFFSET(p) ((size_t) ((p) & 127))
 /*
 static inline size_t bit_offset(uint64_t v) {
     return (size_t) (v % 64);
@@ -75,23 +76,23 @@ static inline size_t clz(uint64_t v) {
         c += 32;
         v <<= 32;
     }
-    if ((v & 0x00000000FFFF0000) == 0) {
+    if ((v & 0xFFFF000000000000) == 0) {
         c += 16;
         v <<= 16;
     }
-    if ((v & 0x000000000000FF00) == 0) {
+    if ((v & 0xFF00000000000000) == 0) {
         c += 8;
         v <<= 8;
     }
-    if ((v & 0x00000000000000F0) == 0) {
+    if ((v & 0xF000000000000000) == 0) {
         c += 4;
         v <<= 4;
     }
-    if ((v & 0x0000000000000003) == 0) {
+    if ((v & 0xC000000000000000) == 0) {
         c += 2;
         v <<= 2;
     }
-    if ((v & 0x0000000000000001) == 0)
+    if ((v & 0x8000000000000000) == 0)
         c += 1;
     return c;
 }
@@ -188,9 +189,11 @@ size_t bitset_count_s(const bitset_t *bitset);
 
 /* Find the index of the first bit set.  */
 size_t bitset_minimum(const bitset_t *bitset);
+size_t bitset_minimum_s(const bitset_t *bitset);
 
 /* Find the index of the last bit set.  */
 size_t bitset_maximum(const bitset_t *bitset);
+size_t bitset_maximum_s(const bitset_t *bitset);
 
 /* compute the union in-place (to b1), returns true if successful, to generate a new bitset first call bitset_copy */
 bool bitset_inplace_union(bitset_t * restrict b1, const bitset_t * restrict b2);

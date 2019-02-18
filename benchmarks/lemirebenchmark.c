@@ -137,8 +137,16 @@ int main() {
         bitset_set(b1, k);
         ++count;
     }
-    assert(bitset_count(b1) == iterate(b1));
+    
+    BEST_TIME(bitset_minimum(b1), 1000);
+    BEST_TIME(bitset_maximum(b1), 1000);
+    BEST_TIME(bitset_minimum_s(b1), 1000);
+    BEST_TIME(bitset_maximum_s(b1), 1000);
+    assert(bitset_minimum(b1) == bitset_minimum_s(b1));
+    assert(bitset_maximum(b1) == bitset_maximum_s(b1));    
+    
     assert(bitset_count(b1) == bitset_count_s(b1));
+    assert(bitset_count(b1) == iterate(b1));
     
     BEST_TIME_CHECK(bitset_count(b1), count, repeat);
     BEST_TIME_CHECK(bitset_count_s(b1), count, repeat);
