@@ -1,5 +1,5 @@
 # cbitset
-[![Build Status](https://travis-ci.org/lemire/cbitset.png)](https://travis-ci.org/lemire/cbitset)
+[![Build Status](https://travis-ci.org/JulStrat/cbitset.svg?branch=dev)](https://travis-ci.org/JulStrat/cbitset)
 
 Simple bitset library in C. It includes fast functions
 to compute cardinalities, unions, intersections...
