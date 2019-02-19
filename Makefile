@@ -4,12 +4,12 @@ CC=gcc
 #
 .SUFFIXES: .cpp .o .c .h
 ifeq ($(DEBUG),1)
-CFLAGS = -coverage -fPIC -std=c99 -ggdb -Wall -Wextra -Wshadow -fsanitize=undefined -fno-omit-frame-pointer -fsanitize=address
+CFLAGS = -fPIC -std=c99 -ggdb -Wall -Wextra -Wshadow -fsanitize=undefined -fno-omit-frame-pointer -fsanitize=address
 else
-CFLAGS = -coverage -fPIC -std=c99 -O3  -Wall -Wextra -Wshadow 
+CFLAGS = -fPIC -std=c99 -O3  -Wall -Wextra -Wshadow 
 endif # debug
 OBJECTS=bitset.o
-all: unit benchmark lemirebenchmark $(OBJECTS)
+all: unit A000040 benchmark lemirebenchmark $(OBJECTS)
 HEADERS=./include/bitset.h ./include/portability.h
 
 bitset.o: ./src/bitset.c $(HEADERS)
@@ -18,9 +18,13 @@ bitset.o: ./src/bitset.c $(HEADERS)
 unit: bitset.o ./tests/unit.c $(HEADERS)
 	$(CC) $(CFLAGS) -o unit ./tests/unit.c bitset.o -Iinclude
 
+A000040: bitset.o ./tests/A000040.c $(HEADERS)
+	$(CC) $(CFLAGS) -o A000040 ./tests/A000040.c bitset.o -Iinclude
+
 lemirebenchmark: bitset.o ./benchmarks/lemirebenchmark.c $(HEADERS)
 	$(CC) $(CFLAGS) -o lemirebenchmark ./benchmarks/lemirebenchmark.c bitset.o -Iinclude
+
 benchmark: bitset.o ./benchmarks/benchmark.c $(HEADERS)
 	$(CC) $(CFLAGS) -o benchmark ./benchmarks/benchmark.c bitset.o -Iinclude
 clean:
-	rm -f  *.o unit benchmark
+	rm -f  *.o *.gcov *.gcde *.gcda *.gcno unit benchmark A000040 

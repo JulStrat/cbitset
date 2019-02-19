@@ -17,7 +17,8 @@
 
 // p size_t
 #define BIT_SLOT(p) ((p) >> 6)
-#define BIT_OFFSET(p) ((p) & 127)
+//#define BIT_OFFSET(p) ((p) & 127)
+#define BIT_OFFSET(p) ((p) % 64)
 #define BIT_MASK(p) (((uint64_t) 1) << BIT_OFFSET(p))
 
 // Soft population count
@@ -166,6 +167,15 @@ static inline void bitset_set(bitset_t *bitset, size_t i) {
     }
     bitset->array[slot] |= ((uint64_t) 1) << BIT_OFFSET(i);
 }
+
+static inline void bitset_unset(bitset_t *bitset, size_t i) {
+    size_t slot = BIT_SLOT(i);
+    if (slot >= bitset->arraysize) {
+            return;
+    }
+    bitset->array[slot] &= ~(((uint64_t) 1) << BIT_OFFSET(i));
+}
+
 
 /* Get the value of the ith bit.  */
 static inline bool bitset_get(const bitset_t *bitset, size_t i) {

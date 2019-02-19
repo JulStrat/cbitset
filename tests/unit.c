@@ -144,17 +144,38 @@ void test_counts() {
 void test_set_all() {
     float startTime, endTime;
     startTime = (float) clock()/CLOCKS_PER_SEC;
-    bitset_t * b1 = bitset_create_with_capacity(1000000*64);
+    bitset_t * b1 = bitset_create_with_capacity(1000*64);
     assert(bitset_count(b1) == 0);
     bitset_set_all(b1);
-    assert(bitset_count(b1) == 1000000*64);
+    assert(bitset_count(b1) == 1000*64);
     bitset_inplace_complement(b1);
     assert(bitset_count(b1) == 0);
     bitset_inplace_complement(b1);    
-    assert(bitset_count(b1) == 1000000*64);
+    assert(bitset_count(b1) == 1000*64);
     bitset_free(b1);
     endTime = (float) clock()/CLOCKS_PER_SEC;
     printf("test_set_all - %f\n", endTime - startTime);
+}
+
+void test_unset() {
+    float startTime, endTime;
+    size_t i;
+    startTime = (float) clock()/CLOCKS_PER_SEC;
+    bitset_t * b1 = bitset_create_with_capacity(1000*64);
+    assert(bitset_count(b1) == 0);
+    
+    for (i = 0; i<1000*64; i++) {
+        bitset_set(b1, i);
+        assert(bitset_get(b1, i) == true);        
+        assert(bitset_count(b1) == 1);
+        bitset_unset(b1, i);
+        //bitset_toggle(b1, i);
+        assert(bitset_get(b1, i) == false);        
+        assert(bitset_count(b1) == 0);        
+    }
+    bitset_free(b1);
+    endTime = (float) clock()/CLOCKS_PER_SEC;
+    printf("test_unset - %f\n", endTime - startTime);
 }
 
 
@@ -168,5 +189,6 @@ int main() {
     test_shift_right();
     test_shift_left();
     test_set_all();
+    test_unset();
     printf("All asserts passed. Code is probably ok.\n");
 }
