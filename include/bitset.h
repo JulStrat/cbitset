@@ -15,20 +15,10 @@
 
 #define GROW_FACTOR 2
 
-#define BIT_SLOT(p) ((size_t) ((p) >> 6))
-/*
-static inline size_t bit_slot(uint64_t v) {
-    return (size_t) (v >> 6);
-}
-*/ 
-
-//#define BIT_OFFSET(p) ((size_t) ((p) % 64))
-#define BIT_OFFSET(p) ((size_t) ((p) & 127))
-/*
-static inline size_t bit_offset(uint64_t v) {
-    return (size_t) (v % 64);
-}
-*/
+// p size_t
+#define BIT_SLOT(p) ((p) >> 6)
+#define BIT_OFFSET(p) ((p) & 127)
+#define BIT_MASK(p) (((uint64_t) 1) << BIT_OFFSET(p))
 
 // Soft population count
 static inline size_t pop_count(uint64_t v) {
@@ -116,6 +106,9 @@ void bitset_free(bitset_t *bitset);
 
 /* Set all bits to zero. */
 void bitset_clear(bitset_t *bitset);
+
+/* Set all bits to one. */
+void bitset_set_all(bitset_t *bitset);
 
 /* Create a copy */
 bitset_t * bitset_copy(const bitset_t *bitset);

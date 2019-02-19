@@ -31,5 +31,10 @@
 # Debug files
 *.dSYM/
 
+# Coverage files
+*.gcov
+*.gcno
+*.gcda
+
 # NetBeans
 nbproject/
