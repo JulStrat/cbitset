@@ -9,7 +9,7 @@ else
 CFLAGS = -fPIC -std=c99 -O3  -Wall -Wextra -Wshadow 
 endif # debug
 OBJECTS=bitset.o
-all: unit A000040 benchmark lemirebenchmark $(OBJECTS)
+all: unit A000040 A003309 benchmark lemirebenchmark $(OBJECTS)
 HEADERS=./include/bitset.h ./include/portability.h
 
 bitset.o: ./src/bitset.c $(HEADERS)
@@ -21,10 +21,13 @@ unit: bitset.o ./tests/unit.c $(HEADERS)
 A000040: bitset.o ./tests/A000040.c $(HEADERS)
 	$(CC) $(CFLAGS) -o A000040 ./tests/A000040.c bitset.o -Iinclude
 
+A003309:  bitset.o ./tests/A003309.c $(HEADERS)
+	$(CC) $(CFLAGS) -o A003309 ./tests/A003309.c bitset.o -Iinclude
+	
 lemirebenchmark: bitset.o ./benchmarks/lemirebenchmark.c $(HEADERS)
 	$(CC) $(CFLAGS) -o lemirebenchmark ./benchmarks/lemirebenchmark.c bitset.o -Iinclude
 
 benchmark: bitset.o ./benchmarks/benchmark.c $(HEADERS)
 	$(CC) $(CFLAGS) -o benchmark ./benchmarks/benchmark.c bitset.o -Iinclude
 clean:
-	rm -f  *.o *.gcov *.gcde *.gcda *.gcno unit benchmark A000040 
+	rm -f  *.o *.gcov *.gcde *.gcda *.gcno unit benchmark lemirebenchmark A000040 A003309 

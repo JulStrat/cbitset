@@ -8,4 +8,5 @@ branches:
   only:
     - master
     - dev
-script: make && ./unit && ./A000040
+
+script: make && ./unit && ./A000040 && ./A003309

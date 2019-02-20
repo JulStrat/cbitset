@@ -17,8 +17,8 @@
 
 // p size_t
 #define BIT_SLOT(p) ((p) >> 6)
-//#define BIT_OFFSET(p) ((p) & 127)
-#define BIT_OFFSET(p) ((p) % 64)
+#define BIT_OFFSET(p) ((p) & 63)
+//#define BIT_OFFSET(p) ((p) % 64)
 #define BIT_MASK(p) (((uint64_t) 1) << BIT_OFFSET(p))
 
 // Soft population count
@@ -32,31 +32,28 @@ static inline size_t pop_count(uint64_t v) {
 // Soft trailing zero bits count
 static inline size_t ctz(uint64_t v) {
     size_t c = 0;
-    if (v == 0)
+    if (v == 0) {
         return 64;
+    }
 
     if ((v & 0x00000000FFFFFFFF) == 0) {
-        c += 32;
-        v >>= 32;
+        c += 32; v >>= 32;
     }
     if ((v & 0x000000000000FFFF) == 0) {
-        c += 16;
-        v >>= 16;
+        c += 16; v >>= 16;
     }
     if ((v & 0x00000000000000FF) == 0) {
-        c += 8;
-        v >>= 8;
+        c += 8; v >>= 8;
     }
     if ((v & 0x000000000000000F) == 0) {
-        c += 4;
-        v >>= 4;
+        c += 4; v >>= 4;
     }
     if ((v & 0x0000000000000003) == 0) {
-        c += 2;
-        v >>= 2;
+        c += 2; v >>= 2;
     }
-    if ((v & 0x0000000000000001) == 0)
+    if ((v & 0x0000000000000001) == 0) {
         c += 1;
+    }
     return c;
 }
 // Soft leading zero bits count
@@ -64,27 +61,23 @@ static inline size_t clz(uint64_t v) {
     size_t c = 0;
 
     if ((v & 0xFFFFFFFF00000000) == 0) {
-        c += 32;
-        v <<= 32;
+        c += 32; v <<= 32;
     }
     if ((v & 0xFFFF000000000000) == 0) {
-        c += 16;
-        v <<= 16;
+        c += 16; v <<= 16;
     }
     if ((v & 0xFF00000000000000) == 0) {
-        c += 8;
-        v <<= 8;
+        c += 8; v <<= 8;
     }
     if ((v & 0xF000000000000000) == 0) {
-        c += 4;
-        v <<= 4;
+        c += 4; v <<= 4;
     }
     if ((v & 0xC000000000000000) == 0) {
-        c += 2;
-        v <<= 2;
+        c += 2; v <<= 2;
     }
-    if ((v & 0x8000000000000000) == 0)
+    if ((v & 0x8000000000000000) == 0) {
         c += 1;
+    }
     return c;
 }
 
@@ -173,9 +166,9 @@ static inline void bitset_unset(bitset_t *bitset, size_t i) {
     if (slot >= bitset->arraysize) {
             return;
     }
-    bitset->array[slot] &= ~(((uint64_t) 1) << BIT_OFFSET(i));
+    //bitset->array[slot] &= ~(((uint64_t) 1) << BIT_OFFSET(i));
+    bitset->array[slot] &= ~BIT_MASK(i);
 }
-
 
 /* Get the value of the ith bit.  */
 static inline bool bitset_get(const bitset_t *bitset, size_t i) {
@@ -192,7 +185,7 @@ static inline bool bitset_toggle(const bitset_t *bitset, size_t i) {
     if (slot >= bitset->arraysize) {
         return false;
     }
-    bitset->array[slot] ^= (((uint64_t) 1) << BIT_OFFSET(i));
+    bitset->array[slot] ^= BIT_MASK(i);
     return true;
 }
 
@@ -248,22 +241,37 @@ static inline bool nextSetBit(const bitset_t *bitset, size_t *i) {
     uint64_t w = bitset->array[x];
     w >>= (*i & 63);
     if (w != 0) {
-#ifndef SOFT_CTZ        
         *i += __builtin_ctzll(w);
-#else
-        *i += ctz(w);
-#endif        
         return true;
     }
     x++;
     while (x < bitset->arraysize) {
         w = bitset->array[x];
         if (w != 0) {
-#ifndef SOFT_CTZ                    
             *i = x * 64 + __builtin_ctzll(w);
-#else            
+            return true;
+        }
+        x++;
+    }
+    return false;
+}
+
+static inline bool nextSetBit_s(const bitset_t *bitset, size_t *i) {
+    size_t x = BIT_SLOT(*i);
+    if (x >= bitset->arraysize) {
+        return false;
+    }
+    uint64_t w = bitset->array[x];
+    w >>= (*i & 63);
+    if (w != 0) {
+        *i += ctz(w);
+        return true;
+    }
+    x++;
+    while (x < bitset->arraysize) {
+        w = bitset->array[x];
+        if (w != 0) {
             *i = x * 64 + ctz(w);            
-#endif            
             return true;
         }
         x++;
